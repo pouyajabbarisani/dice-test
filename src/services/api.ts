@@ -31,8 +31,15 @@ export const fetchEventsByVenue = async (
       name: event.name || 'Unknown Event',
       date: event.date || '',
       venue: {
-        name: event.venue || venueName,
+        name: event.venue?.name || event.venue || venueName,
+        location: event.location,
       },
+      image: event.images?.[0] || event.event_images?.landscape || event.event_images?.square,
+      price: event.ticket_types?.[0]?.price ? `£${(event.ticket_types[0].price.face_value / 100).toFixed(0)}` : null,
+      description: event.description || event.raw_description,
+      soldOut: event.sold_out || false,
+      apple_music_tracks: event.apple_music_tracks || [],
+      spotify_tracks: event.spotify_tracks || [],
     })) || [];
 
     // Check if there's a next page URL in the links

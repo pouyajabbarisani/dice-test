@@ -12,7 +12,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-screen-xl mx-auto px-4 py-8">
+      <div className="max-w-screen-lg mx-auto px-4 py-8">
         <Logo />
         <SearchInput onVenueSelect={handleVenueSelect} />
         <EventList 

@@ -10,7 +10,7 @@ interface EventCardProps {
   event: Event;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ event }) => {
+export const EventCard: React.FC<EventCardProps> = React.memo(({ event }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -31,8 +31,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
       return dateString;
     }
   };
-
-
 
   const formatImgixUrl = (imageUrl: string | undefined, width: number = 400, height: number = 400) => {
     if (!imageUrl) return null;
@@ -56,11 +54,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     if (!event.sale_end_date) return false;
     const saleEndDate = new Date(event.sale_end_date);
     const now = new Date();
-    return saleEndDate > now; // Sale is still active (end date is in the future)
+    return saleEndDate > now;
   };
 
   return (
-    <div className="flex flex-col space-y-3">
+    <article className="flex flex-col space-y-3" aria-labelledby={`event-${event.id}`}>
 
         {formatImgixUrl(event.image) && (
         <div className="w-full aspect-square overflow-hidden relative">
@@ -102,7 +100,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
         {formatDate(event.date)}
       </div>
       
-      <h3 className="text-[1.75rem] !mt-2 font-bold leading-[110%]">
+      <h3 id={`event-${event.id}`} className="text-[1.75rem] !mt-2 font-bold leading-[110%]">
         {event.name}
       </h3>
       
@@ -124,10 +122,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
       
       <div className="flex justify-between items-center mt-4">
         <button 
-          className={`px-4 py-3 font-bold text-center transition-colors ${
+          className={`px-4 py-3 font-bold text-center transition-colors focus:ring-2 focus:ring-offset-2 ${
             event.sold_out
               ? 'bg-gray-300 text-black cursor-not-allowed' 
-              : 'text-white hover:opacity-80'
+              : 'text-white hover:opacity-80 focus:ring-blue-500'
           }`}
           style={{
             fontSize: '14px',
@@ -138,6 +136,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             ...(!event.sold_out && { backgroundColor: '#3C74FF' })
           }}
           disabled={event.sold_out}
+          aria-label={`${event.sold_out ? 'Event is sold out' : 'Get reminded about'} ${event.name}`}
         >
           {event.sold_out ? 'SOLD OUT' : 'GET REMINDED'}
         </button>
@@ -148,6 +147,6 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
-};
+});

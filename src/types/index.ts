@@ -8,7 +8,11 @@ export interface Event {
   date: string;
   venue: {
     name: string;
-    location?: string;
+    location?: string | {
+      city?: string;
+      country?: string;
+      state?: string;
+    };
   };
   image?: string;
   price?: string;

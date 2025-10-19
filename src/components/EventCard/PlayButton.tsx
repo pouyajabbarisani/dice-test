@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 interface Track {
   title: string;
@@ -12,7 +12,7 @@ interface PlayButtonProps {
   className?: string;
 }
 
-export const PlayButton: React.FC<PlayButtonProps> = ({ 
+export const PlayButton: React.FC<PlayButtonProps> = React.memo(({ 
   apple_music_tracks = [], 
   spotify_tracks = [], 
   className = "" 
@@ -20,13 +20,14 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
-  const hasAudioTracks = () => {
+  // Only memoize expensive array operations
+  const hasAudioTracks = useMemo(() => {
     const hasAppleMusic = apple_music_tracks.length > 0 && 
       apple_music_tracks.some(track => track.preview_url);
     const hasSpotify = spotify_tracks.length > 0 && 
       spotify_tracks.some(track => track.preview_url);
     return hasAppleMusic || hasSpotify;
-  };
+  }, [apple_music_tracks, spotify_tracks]);
 
   const getPreviewUrl = (): string | null => {
     const spotifyTrack = spotify_tracks.find(track => track.preview_url);
@@ -94,14 +95,15 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
     };
   }, [audio]);
 
-  if (!hasAudioTracks()) {
+  if (!hasAudioTracks) {
     return null;
   }
 
   return (
-    <div 
+    <button 
       className={`absolute bottom-0 left-0 w-[50px] h-[50px] bg-black bg-opacity-50 flex items-center justify-center cursor-pointer hover:bg-opacity-70 transition-opacity ${className}`}
       onClick={handlePlayPause}
+      aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
     >
       {isPlaying ? (
         // Pause
@@ -125,6 +127,6 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
           <path d="M8 5v14l11-7z"/>
         </svg>
       )}
-    </div>
+    </button>
   );
-};
+});

@@ -55,6 +55,7 @@ export const useEvents = () => {
     error, 
     hasMore, 
     fetchEvents, 
-    loadMoreEvents 
+    loadMoreEvents,
+    hasSearched: !!currentVenue
   };
 };

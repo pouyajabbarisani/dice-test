@@ -9,6 +9,7 @@ interface EventListProps {
   error: string | null;
   hasMore: boolean;
   onLoadMore: () => void;
+  hasSearched?: boolean;
 }
 
 
@@ -18,12 +19,13 @@ export const EventList: React.FC<EventListProps> = ({
   loadingMore, 
   error, 
   hasMore, 
-  onLoadMore 
+  onLoadMore,
+  hasSearched = false
 }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-blue-600"></div>
         <span className="ml-2 text-gray-600">Loading events...</span>
       </div>
     );
@@ -38,6 +40,9 @@ export const EventList: React.FC<EventListProps> = ({
   }
   
   if (events.length === 0) {
+    if (!hasSearched) {
+      return null; // Don't show anything if no search has been performed
+    }
     return (
       <div className="text-center py-12 text-gray-500">
         No events found.
@@ -48,7 +53,7 @@ export const EventList: React.FC<EventListProps> = ({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <h2 className="text-2xl font-black text-gray-900">
+      <h2 className="text-2xl font-normal text-gray-900">
         Upcoming events at {events[0].venue.name}
       </h2>
       
@@ -68,7 +73,7 @@ export const EventList: React.FC<EventListProps> = ({
           >
             {loadingMore ? (
               <>
-                <div className="animate-spin h-4 w-4 border-b-2 border-white inline-block mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
                 Loading...
               </>
             ) : (

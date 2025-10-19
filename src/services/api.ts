@@ -37,9 +37,15 @@ export const fetchEventsByVenue = async (
       image: event.images?.[0] || event.event_images?.landscape || event.event_images?.square,
       price: event.ticket_types?.[0]?.price ? `£${(event.ticket_types[0].price.face_value / 100).toFixed(0)}` : null,
       description: event.description || event.raw_description,
-      soldOut: event.sold_out || false,
+      sold_out: event.sold_out || false,
       apple_music_tracks: event.apple_music_tracks || [],
       spotify_tracks: event.spotify_tracks || [],
+      status: event.status,
+      sale_start_date: event.sale_start_date,
+      sale_end_date: event.sale_end_date,
+      featured: event.featured || false,
+      lineup: event.lineup || [],
+      ticket_types: event.ticket_types || [],
     })) || [];
 
     // Check if there's a next page URL in the links

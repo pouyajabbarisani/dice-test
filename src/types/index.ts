@@ -13,7 +13,7 @@ export interface Event {
   image?: string;
   price?: string;
   description?: string;
-  soldOut?: boolean;
+  sold_out?: boolean;
   apple_music_tracks?: Array<{
     title: string;
     open_url: string;
@@ -23,5 +23,23 @@ export interface Event {
     title: string;
     open_url: string;
     preview_url?: string;
+  }>;
+  status?: string;
+  sale_start_date?: string;
+  sale_end_date?: string;
+  featured?: boolean;
+  lineup?: Array<{
+    details: string;
+    time?: string;
+  }>;
+  ticket_types?: Array<{
+    id: number;
+    name: string;
+    price: {
+      face_value: number;
+      total: number;
+      fees: number;
+    };
+    sold_out: boolean;
   }>;
 }

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Event } from '../../types';
 import { formatLocation } from '../../utils';
+import { PlayButton } from './PlayButton';
+import { SaleIndicator } from './SaleIndicator';
+import { FeaturedIndicator } from './FeaturedIndicator';
+import { MoreInfoSection } from './MoreInfoSection';
 
 interface EventCardProps {
   event: Event;
@@ -48,6 +52,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
     return `${imageUrl}${separator}${imgixParams}`;
   };
 
+  const isSaleActive = () => {
+    if (!event.sale_end_date) return false;
+    const saleEndDate = new Date(event.sale_end_date);
+    const now = new Date();
+    return saleEndDate > now; // Sale is still active (end date is in the future)
+  };
+
   return (
     <div className="flex flex-col space-y-3">
 
@@ -69,6 +80,21 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             }}
           />
           
+          <PlayButton 
+            apple_music_tracks={event.apple_music_tracks}
+            spotify_tracks={event.spotify_tracks}
+          />
+          
+          <FeaturedIndicator 
+            featured={event.featured}
+            className={isSaleActive() ? 'bottom-12' : 'bottom-4'}
+          />
+          
+          <SaleIndicator 
+            status={event.status}
+            sale_start_date={event.sale_start_date}
+            sale_end_date={event.sale_end_date}
+          />
         </div>
       )}
       
@@ -90,27 +116,16 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </div>
         )}
       
-      <div className="!mt-5 p-1" style={{ backgroundColor: '#F2F2F2' }}>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full text-left px-2 py-0 text-md hover:opacity-80 transition-colors flex justify-between items-center font-bold"
-          style={{ backgroundColor: '#F2F2F2' }}
-        >
-          <span>More info</span>
-          <span className="text-2xl font-light">{isExpanded ? '-' : '+'}</span>
-        </button>
-        
-        {isExpanded && event.description && (
-          <div className="px-3 pb-2 pt-2 text-md leading-[126%] font-medium" style={{ backgroundColor: '#F2F2F2' }}>
-            {event.description}
-          </div>
-        )}
-      </div>
+      <MoreInfoSection 
+        event={event}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+      />
       
       <div className="flex justify-between items-center mt-4">
         <button 
           className={`px-4 py-3 font-bold text-center transition-colors ${
-            event.soldOut 
+            event.sold_out
               ? 'bg-gray-300 text-black cursor-not-allowed' 
               : 'text-white hover:opacity-80'
           }`}
@@ -120,11 +135,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
             lineHeight: '100%',
             letterSpacing: '1px',
             textTransform: 'uppercase',
-            ...(!event.soldOut && { backgroundColor: '#3C74FF' })
+            ...(!event.sold_out && { backgroundColor: '#3C74FF' })
           }}
-          disabled={event.soldOut}
+          disabled={event.sold_out}
         >
-          {event.soldOut ? 'SOLD OUT' : 'GET REMINDED'}
+          {event.sold_out ? 'SOLD OUT' : 'GET REMINDED'}
         </button>
         
         {event.price && (
